@@ -6,6 +6,9 @@ import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExe
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
+import io.vertx.core.impl.ContextInternal;
+import io.vertx.core.impl.future.PromiseImpl;
 import io.vertx.sqlclient.*;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.Row;
@@ -150,8 +153,6 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public Future<RowSet<Row>> executeAny(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Promise<RowSet<Row>> rowPromise = Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
-        return rowPromise.future();
+        return delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query));
     }
 }
